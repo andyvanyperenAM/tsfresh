@@ -27,7 +27,7 @@ def _feature_extraction_on_chunk_helper(df, column_id, column_kind,
     features = pd.DataFrame(features)
     features["value"] = features["value"].astype("double")
 
-    return features[[column_id, "variable", "value"]]
+    return features[["id", "variable", "value"]]
 
 
 def dask_feature_extraction_on_chunk(df, column_id, column_kind,
@@ -207,4 +207,4 @@ def spark_feature_extraction_on_chunk(df, column_id, column_kind,
     feature_extraction_udf = pandas_udf(f"{column_id} long, variable string, value double",
                                         PandasUDFType.GROUPED_MAP)(feature_extraction)
 
-    return df.apply(feature_extraction_udf)
+    return df.apply(feature_extraction_udf).withColumnRenamed("id",column_id)
